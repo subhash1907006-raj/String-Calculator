@@ -1,0 +1,86 @@
+#include <bits/stdc++.h>
+using namespace std;
+set<char> hs;
+int n1 , n2, r , k;
+string s1;
+void helper2(string& s,int i,int& j,char c){
+    k=i;
+    if(s[i]=='-' || s[i]=='+') k++;
+    while(k!=j){
+        if(s[k]==c){
+        int k1=k-1 , k2=k+1;
+        if(s[k2]=='-' || s[k2]=='+') k2++;
+        while(k1!=-1 && hs.find(s[k1])==hs.end()) k1--;
+        while(k2!=j+1 && hs.find(s[k2])==hs.end()) k2++;
+        k1++ , k2--;
+        if((k>0 && (s[k1-1]=='-' || s[k1-1]=='+')) && (k>1 && hs.find(s[k-2])!=hs.end())) k1--;
+        if(abs(k1-k2)==1) return;
+        n1=stoi(s.substr(k1,k-k1)) , n2=stoi(s.substr(k+1,k2-k));
+        if(c=='%') r=n1%n2;
+        if(c=='^') r=pow(n1,n2);
+        if(c=='/') r=n1/n2;
+        if(c=='*') r=n1*n2;
+        if(c=='+') r=n1+n2;
+        if(c=='-') r=n1-n2;
+        s1=to_string(r);
+        int newLen = (int)s1.size();
+        j -= (k2 - k1 + 1) - newLen;
+        s=s.substr(0,k1)+s1+s.substr(k2+1);
+        k=k1;
+        }
+        else k++;
+    }
+    return;
+}
+void helper(string& s,int i,int j){
+    if(s[i]=='('){ 
+        s.erase(i,1);
+        s.erase(j-1,1);
+        j-=2;
+    }
+    for(char c:hs) helper2(s,i,j,c);
+    return;
+}
+int main() {
+    hs.insert('%');
+    hs.insert('^');
+    hs.insert('/');
+    hs.insert('*');
+    hs.insert('+');
+    hs.insert('-');
+	string s;
+	cin>>s;
+	if(hs.find(s[0])!=hs.end() || hs.find(s[s.size()-1])!=hs.end()){
+	    cout<<"INVALID!!!"<<endl;
+	    return 0;
+	}
+	for(int i=0;i<s.size()-1;i++){
+	    if(hs.find(s[i])!=hs.end() && hs.find(s[i+1])!=hs.end() && s[i+1]!='-' && s[i+1]!='+'){
+	        cout<<"INVALID!!!"<<endl;
+	        return 0; 
+	    }
+	    if(hs.find(s[i])!=hs.end() && s[i]==s[i+1]){
+	        cout<<"INVALID!!!"<<endl;
+	        return 0; 
+	    }
+	}
+	stack<int> s1;
+	int i2=0;
+	while(i2<s.size()){
+	    if(s[i2]=='(') s1.push(i2);
+	    else if(s[i2]==')'){
+	        int i1=s1.top();
+	        s1.pop();
+	        helper(s,i1,i2);
+	        i2=i1-1;
+	    }
+	    i2++;
+	}
+    if(s1.size()!=0){
+        cout<<"INVALID!!!"<<endl;
+        return 0;
+    }
+    helper(s,0,s.size()-1);
+    cout<<s<<endl;
+    return 0;
+}
