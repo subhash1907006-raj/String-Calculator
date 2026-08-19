@@ -38,7 +38,12 @@ void helper(string& s,int i,int j){
         s.erase(j-1,1);
         j-=2;
     }
-    for(char c:hs) helper2(s,i,j,c);
+    helper2(s,i,j,'%');
+    helper2(s,i,j,'^');
+    helper2(s,i,j,'/');
+    helper2(s,i,j,'*');
+    helper2(s,i,j,'+');
+    helper2(s,i,j,'-');
     return;
 }
 int main() {
@@ -50,7 +55,11 @@ int main() {
     hs.insert('-');
 	string s;
 	cin>>s;
-	if(hs.find(s[0])!=hs.end() || hs.find(s[s.size()-1])!=hs.end()){
+	if(hs.find(s[s.size()-1])!=hs.end()){
+	    cout<<"INVALID!!!"<<endl;
+	    return 0;
+	}
+	if(hs.find(s[0])!=hs.end() && s[0]!='+' && s[0]!='-'){
 	    cout<<"INVALID!!!"<<endl;
 	    return 0;
 	}
